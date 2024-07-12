@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'checkout_screen.dart'; // Import your checkout_screen.dart file
+import 'checkout_screen.dart';
+import 'constants.dart'; // Import your checkout_screen.dart file
 
 class CartScreen extends StatefulWidget {
   @override
@@ -18,14 +19,15 @@ class _CartScreenState extends State<CartScreen> {
   Future<List<CartItem>> fetchCartItems() async {
     try {
       String? token = await getToken();
-      final response = await http.get(Uri.parse('http://65.108.148.127/api/cart/get'),
+      final response = await http.get(Uri.parse('$baseUrl/api/cart/get'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
       if (response.statusCode == 200) {
         final body = json.decode(response.body);
         if (body['data']== null) {
-          throw Exception('Cart is empty right now.');
+          OnEmptyCart();
+          return [];
         }
         if (body is List) {
           // If the response is a JSON array
@@ -50,10 +52,10 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        title: const Text('Cart'),
         actions: [
           IconButton(
-            icon: Icon(Icons.code),
+            icon: const Icon(Icons.code),
             onPressed: () {
               // Display codbanner.png
               showDialog(
@@ -70,11 +72,11 @@ class _CartScreenState extends State<CartScreen> {
         future: fetchCartItems(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No items in cart'));
+            return const Center(child: Text('No items in cart'));
           } else {
             // Create a list of ListTile widgets for each cart item
             List<Widget> cartItemsList = snapshot.data!.map((item) {
@@ -90,14 +92,14 @@ class _CartScreenState extends State<CartScreen> {
             double totalOrder = snapshot.data!.fold(0.0, (sum, item) => sum + item.price * item.quantity);
             cartItemsList.add(
               ListTile(
-                title: Text('Order Total:'),
+                title: const Text('Order Total:'),
                 subtitle: Text('Rs $totalOrder'),
-                trailing: Text('Free'),
+                trailing: const Text('Free'),
               ),
             );
             cartItemsList.add(
               ListTile(
-                title: Text('Cash on Delivery'),
+                title: const Text('Cash on Delivery'),
                 leading: Image.network('http://example.com/path/to/codbanner.png'), // Replace with actual URL
               ),
             );
@@ -113,17 +115,21 @@ class _CartScreenState extends State<CartScreen> {
             // Navigate to checkout_screen.dart when button is pressed
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CheckoutScreen()),
+              MaterialPageRoute(builder: (context) => const CheckoutScreen()),
             );
           },
-          child: Text('Proceed to Checkout'),
+          child: const Text('Proceed to Checkout'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.purple, // Change the button color to purple
-            minimumSize: Size(double.infinity, 50), // Full width and custom height
+            minimumSize: const Size(double.infinity, 50), // Full width and custom height
           ),
         ),
       ),
     );
+  }
+
+  Center OnEmptyCart() {
+    return const Center(child: Text('No categories found'));
   }
 }
 

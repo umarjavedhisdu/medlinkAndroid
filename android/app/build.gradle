@@ -49,6 +49,12 @@ android {
             // Add any specific debug configuration if needed
         }
     }
+
+    buildscript {
+        dependencies {
+            classpath("com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
+        }
+    }
 }
 
 flutter {
@@ -59,4 +65,6 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0'
     implementation 'androidx.core:core-ktx:1.10.0' // Add core-ktx for extended Kotlin support
     // Add any additional dependencies here
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 }

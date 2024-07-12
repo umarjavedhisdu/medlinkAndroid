@@ -7,7 +7,6 @@ import 'constants.dart';
 import 'product_detail_screen.dart'; // Import the ProductDetailScreen class
 import 'profiles_screen.dart';
 import 'location.dart';
-import 'checkout_screen.dart';
 import 'cart_screen.dart';
 
 class MainMenuScreen extends StatefulWidget {
@@ -430,7 +429,7 @@ class Category {
     return Category(
       id: json['categoryId'] ?? 0,
       name: json['categoryName'] ?? 'Unknown',
-      imageUrl: '$baseUrl'+ json['categoryImage'] ?? '',
+      imageUrl: baseUrl+ json['categoryImage'],
     );
   }
 }

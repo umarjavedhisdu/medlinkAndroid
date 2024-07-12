@@ -29,6 +29,9 @@ class _LocationScreenState extends State<LocationScreen> {
     if (!_serviceEnabled) {
       _serviceEnabled = await _location.requestService();
       if (!_serviceEnabled) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Location services are disabled.'))
+        );
         return;
       }
     }
@@ -37,10 +40,12 @@ class _LocationScreenState extends State<LocationScreen> {
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await _location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Location permissions are denied.'))
+        );
         return;
       }
     }
-
     _getCurrentLocation();
   }
 
@@ -56,7 +61,9 @@ class _LocationScreenState extends State<LocationScreen> {
         );
       }
     } catch (e) {
-      print('Error getting location: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to get current location: $e'))
+      );
     }
   }
 
@@ -90,14 +97,14 @@ class _LocationScreenState extends State<LocationScreen> {
               children: [
                 TextField(
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search),
                     hintText: 'Search address',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _buildingController,
                   decoration: InputDecoration(
@@ -107,43 +114,41 @@ class _LocationScreenState extends State<LocationScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
-                Text('Save this address as'),
-                SizedBox(height: 8),
+                const SizedBox(height: 16),
+                const Text('Save this address as'),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ChoiceChip(
-                      label: Text('Home'),
+                      label: const Text('Home'),
                       selected: false,
                       onSelected: (selected) {},
                     ),
                     ChoiceChip(
-                      label: Text('Office'),
+                      label: const Text('Office'),
                       selected: false,
                       onSelected: (selected) {},
                     ),
                     ChoiceChip(
-                      label: Text('Other'),
+                      label: const Text('Other'),
                       selected: false,
                       onSelected: (selected) {},
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
                     if (_currentLocation != null) {
-                      print('Selected location: $_currentLocation');
-                      print('Building name/house no.: ${_buildingController.text}');
                       Navigator.pop(context, _currentLocation); // Pass the location back
                     }
                   },
-                  child: Text('Save and Continue'),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size.fromHeight(50),
+                    minimumSize: const Size.fromHeight(50),
                     backgroundColor: Colors.blueAccent,
                   ),
+                  child: const Text('Save and Continue'),
                 ),
               ],
             ),
@@ -159,7 +164,7 @@ class _LocationScreenState extends State<LocationScreen> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: LocationScreen(),
   ));
 }

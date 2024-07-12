@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'MainMenuScreen.dart';
 import 'constants.dart';
 
 class OrderScreen extends StatefulWidget {
-  const OrderScreen({Key? key}) : super(key: key);
+  const OrderScreen({super.key});
 
   @override
   _OrderScreenState createState() => _OrderScreenState();
@@ -45,11 +44,11 @@ class _OrderScreenState extends State<OrderScreen> {
         future: _orders,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No orders found'));
+            return const Center(child: Text('No orders found'));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,
@@ -105,7 +104,7 @@ class Order {
 class OrderCard extends StatelessWidget {
   final Order order;
 
-  const OrderCard({Key? key, required this.order}) : super(key: key);
+  const OrderCard({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +130,7 @@ class OrderCard extends StatelessWidget {
 class OrderDetailScreen extends StatelessWidget {
   final int orderId;
 
-  const OrderDetailScreen({Key? key, required this.orderId}) : super(key: key);
+  const OrderDetailScreen({super.key, required this.orderId});
 
   Future<OrderDetail> fetchOrderDetail() async {
     final response = await http.get(
@@ -157,11 +156,11 @@ class OrderDetailScreen extends StatelessWidget {
         future: fetchOrderDetail(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return Center(child: Text('No order details found'));
+            return const Center(child: Text('No order details found'));
           } else {
             final orderDetail = snapshot.data!;
             return Padding(
@@ -169,8 +168,8 @@ class OrderDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Order ID: ${orderDetail.orderId}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 8),
+                  Text('Order ID: ${orderDetail.orderId}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
                   Text('Customer: ${orderDetail.fullName}'),
                   Text('Phone: ${orderDetail.phoneNumber}'),
                   Text('Address: ${orderDetail.address}'),
@@ -178,8 +177,8 @@ class OrderDetailScreen extends StatelessWidget {
                   Text('Total Items: ${orderDetail.totalItems}'),
                   Text('Total Amount: \$${orderDetail.totalAmount}'),
                   Text('Created Date: ${orderDetail.createdDate}'),
-                  SizedBox(height: 16),
-                  Text('Products:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  const Text('Products:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   Expanded(
                     child: ListView.builder(
                       itemCount: orderDetail.productSummary.length,

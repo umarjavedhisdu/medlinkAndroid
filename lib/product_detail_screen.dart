@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -8,7 +10,7 @@ import 'constants.dart';
 class ProductDetailScreen extends StatefulWidget {
   final int productId;
 
-  ProductDetailScreen({required this.productId});
+  ProductDetailScreen({super.key, required this.productId});
 
   @override
   _ProductDetailScreenState createState() => _ProductDetailScreenState();
@@ -31,32 +33,42 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Future<Product> fetchProductDetails(int productId) async {
-    String? token = await getToken();
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/Products/get/$productId'),
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    try {
+      String? token = await getToken();
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/Products/get/$productId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body)['data'];
-      return Product.fromJson(responseData);
-    } else {
-      throw Exception('Failed to load product details');
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body)['data'];
+        return Product.fromJson(responseData);
+      } else {
+        throw HttpException(json.decode(response.body)['messages']);
+      }
+    }
+    catch (_) {
+      rethrow;
     }
   }
 
   Future<List<Product>> fetchOtherProducts() async {
-    String? token = await getToken();
-    final response = await http.get(
-      Uri.parse('$baseUrl/api/Products/get/all'),
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    try {
+      String? token = await getToken();
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/Products/get/all'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
-    if (response.statusCode == 200) {
-      List<dynamic> productsJson = json.decode(response.body)['data'];
-      return productsJson.map((json) => Product.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load other products');
+      if (response.statusCode == 200) {
+        List<dynamic> productsJson = json.decode(response.body)['data'];
+        return productsJson.map((json) => Product.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load other products');
+      }
+    }
+    catch (exception) {
+      throw Exception(exception);
     }
   }
 
@@ -90,7 +102,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Stack(
                     children: [
                       Image.network(
-                        '${snapshot.data!.imageUrl}',
+                        snapshot.data!.imageUrl,
                         height: 200,
                         fit: BoxFit.cover,
                       ),
@@ -164,11 +176,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     onPressed: () {
                       // Add product to cart
                     },
-                    child: const Text('Add to Cart'),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
                       backgroundColor: Colors.blueAccent,
                     ),
+                    child: const Text('Add to Cart'),
                   ),
                   const SizedBox(height: 32),
                   const Text(
@@ -234,7 +246,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 class Product {
   final int id;
   final String name;
-  final double price;
+  final int price;
   final String description;
   final String imageUrl;
 
@@ -251,18 +263,18 @@ class Product {
       return Product(
         id: json['productId'],
         name: json['productName'] ?? "",
-        price: json['productPrice']?.toDouble() ?? 0.0,
+        price: json['productPrice'] ?? 0,
         description: json['productDescription'] ?? "",
-        imageUrl: "$baseUrl" + json['productImage'] ?? "",
+        imageUrl: baseUrl + json['productImage'],
       );
     }
     else {
       return Product(
         id: json['productId'],
         name: json['productName'] ?? "",
-        price: json['price']?.toDouble() ?? 0.0,
+        price: json['productPrice'] ?? 0,
         description: "",
-        imageUrl: "$baseUrl" + json['imageUrl'] ?? "",
+        imageUrl: baseUrl + json['productImage'],
       );
     }
 
@@ -272,16 +284,16 @@ class Product {
 class ProductCard extends StatelessWidget {
   final String title;
   final String imageUrl;
-  final double price;
+  final int price;
   final VoidCallback onTap;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.imageUrl,
     required this.price,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

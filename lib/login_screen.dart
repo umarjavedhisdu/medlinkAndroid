@@ -8,7 +8,7 @@ import 'register_screen.dart'; // Import the RegisterScreen.dart file
 import 'forgetpassword.dart'; // Import the ForgetPasswordScreen.dart file
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -115,10 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ForgetPasswordScreen()),
+                        MaterialPageRoute(builder: (context) => const ForgetPasswordScreen()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'Forgot Password?',
                       style: TextStyle(
                           color: Color.fromRGBO(88, 87, 219, 1),
@@ -131,10 +131,10 @@ class _LoginScreenState extends State<LoginScreen> {
               if (_errorMessage != null)
                 Text(
                   _errorMessage!,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               if (_isLoading)
-                CircularProgressIndicator()
+                const CircularProgressIndicator()
               else
                 OutlinedButton(
                   onPressed: _login,
@@ -147,12 +147,12 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?"),
+                  const Text("Don't have an account?"),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => RegisterScreen()),
+                        MaterialPageRoute(builder: (context) => const RegisterScreen()),
                       );
                     },
                     child: Text(

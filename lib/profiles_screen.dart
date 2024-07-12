@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 
 class ProfilesScreen extends StatefulWidget {
-  const ProfilesScreen({Key? key}) : super(key: key);
+  const ProfilesScreen({super.key});
 
   @override
   _ProfilesScreenState createState() => _ProfilesScreenState();
@@ -65,39 +65,39 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
               backgroundColor: Colors.white,
               child: Text(
                 userName.isNotEmpty ? userName[0] : 'A',
-                style: TextStyle(fontSize: 40.0),
+                style: const TextStyle(fontSize: 40.0),
               ),
             ),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.person),
             title: Text('My Profile'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.notifications),
             title: Text('Notifications'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.home),
             title: Text('Your Addresses'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.group),
             title: Text('Invite Friends'),
           ),
-          Divider(),
-          ListTile(
+          const Divider(),
+          const ListTile(
             title: Text('Need Help?'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.info),
             title: Text('About Us'),
           ),
-          ListTile(
+          const ListTile(
             leading: Icon(Icons.book),
             title: Text('Terms and Conditions'),
           ),

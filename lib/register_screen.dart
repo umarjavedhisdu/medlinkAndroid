@@ -30,12 +30,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Passwords do not match'),
+          title: const Text('Error'),
+          content: const Text('Passwords do not match'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -61,8 +61,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Success'),
-          content: Text('Registration successful'),
+          title: const Text('Success'),
+          content: const Text('Registration successful'),
           actions: [
             TextButton(
               onPressed: () {
@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
                 );
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -82,12 +82,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Error'),
+          title: const Text('Error'),
           content: Text('Registration failed: ${response.body}'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         ),
@@ -191,7 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Already have an account?"),
+                    const Text("Already have an account?"),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -199,7 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           MaterialPageRoute(builder: (context) => const LoginScreen()),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'Login',
                         style: TextStyle(
                           color: Color.fromRGBO(88, 87, 219, 1),

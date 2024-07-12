@@ -6,7 +6,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +15,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: OnboardingScreen(),
+      home: const OnboardingScreen(),
     );
   }
 }
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
@@ -63,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 _currentPage = page;
               });
             },
-            children: [
+            children: const [
               OnboardingPage(image: 'assets/images/NewUser1.png'),
               OnboardingPage(image: 'assets/images/NewUser2.png'),
               OnboardingPage(image: 'assets/images/NewUser3.png'),
@@ -107,9 +107,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'Next',
                     style: TextStyle(
@@ -134,13 +134,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class OnboardingPage extends StatelessWidget {
   final String image;
 
-  const OnboardingPage({Key? key, required this.image}) : super(key: key);
+  const OnboardingPage({super.key, required this.image});
 
   @override
   Widget build(BuildContext context) {
     return Image.asset(
       image,
-      fit: BoxFit.cover,
+      fit: BoxFit.fill,
       width: double.infinity,
       height: double.infinity,
     );

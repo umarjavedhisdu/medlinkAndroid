@@ -1,9 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"  />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <application
         android:label="medlink"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"> <!-- Reference to the app icon -->
         <!-- Your activity configurations -->
+
+        <meta-data
+            android:name="io.flutter.embedding.android.PlatformView"
+            android:value="hybridcomposition" />
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA_cDu8E74RFeA0J8YVZ9yZbRetTnun9oE"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

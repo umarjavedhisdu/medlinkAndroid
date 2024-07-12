@@ -5,16 +5,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
 
-class ProductDetailScreen extends StatefulWidget {
+class ProductScreen extends StatefulWidget {
   final int productId;
 
-  ProductDetailScreen({required this.productId});
+  ProductScreen({required this.productId});
 
   @override
-  _ProductDetailScreenState createState() => _ProductDetailScreenState();
+  _ProductScreenState createState() => _ProductScreenState();
 }
 
-class _ProductDetailScreenState extends State<ProductDetailScreen> {
+class _ProductScreenState extends State<ProductScreen> {
   late Future<Product> product;
   late Future<List<Product>> otherProducts;
 
@@ -198,7 +198,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ProductDetailScreen(
+                                        builder: (context) => ProductScreen(
                                           productId: snapshot.data![index].id,
                                         ),
                                       ),
@@ -315,6 +315,6 @@ class ProductCard extends StatelessWidget {
 
 void main() {
   runApp(MaterialApp(
-    home: ProductDetailScreen(productId: 1),
+    home: ProductScreen(productId: 1),
   ));
 }

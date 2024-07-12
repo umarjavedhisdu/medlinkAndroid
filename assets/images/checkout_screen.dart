@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:medlink/location.dart'; // Import your location.dart file
 
 class CheckoutScreen extends StatefulWidget {
+  const CheckoutScreen({super.key});
+
   @override
   _CheckoutScreenState createState() => _CheckoutScreenState();
 }
@@ -49,7 +51,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           'Total': 'Failed to load',
         };
       });
-      print('Error fetching order details: $error');
     }
   }
 
@@ -57,54 +58,54 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Checkout'),
+        title: const Text('Checkout'),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            const Text(
               'Shipping Address',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               shippingAddress,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 height: 1.5,
               ),
             ),
-            SizedBox(height: 32),
-            Text(
+            const SizedBox(height: 32),
+            const Text(
               'Payment Summary',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             buildPaymentSummaryRow('Order Total', paymentSummary['Order Total']!),
             buildPaymentSummaryRow('Shipping', paymentSummary['Shipping']!),
             buildPaymentSummaryRow('Total', paymentSummary['Total']!),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
                 // Navigate to the LocationScreen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LocationScreen()),
+                  MaterialPageRoute(builder: (context) => const LocationScreen()),
                 );
               },
-              child: Text('Change'),
               style: ElevatedButton.styleFrom(
-                minimumSize: Size.fromHeight(50),
+                minimumSize: const Size.fromHeight(50),
                 backgroundColor: Colors.blueAccent,
               ),
+              child: const Text('Change'),
             ),
           ],
         ),
@@ -118,14 +119,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
           ),
         ),

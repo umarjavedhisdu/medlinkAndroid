@@ -32,7 +32,7 @@ class _SplashScreen1State extends State<SplashScreen1> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 1), () {
       _checkLoginStatus();
       // Navigator.pushReplacement(
       //   context,
@@ -63,35 +63,8 @@ class _SplashScreen1State extends State<SplashScreen1> {
         fit: StackFit.expand, // Ensure the background image covers the entire screen
         children: [
           Image.asset(
-            'assets/images/splash1.png',
+            'assets/images/splash.png',
             fit: BoxFit.cover, // Cover the entire screen with the image
-          ),
-          Positioned(
-            // Added button in the top right corner
-            top: 20,
-            right: 20,
-            child: SizedBox(
-              width: 80,
-              height: 30,
-              child: TextButton(
-                onPressed: () {
-                  // Add the logic to skip the screen
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white, shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                  backgroundColor: Colors.transparent,
-                ),
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
           ),
         ],
       ),
