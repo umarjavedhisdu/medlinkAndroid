@@ -13,9 +13,9 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.6
   http: ^0.13.3
-  google_maps_flutter: ^2.6.1
+  google_maps_flutter: ^2.1.7
   location: ^6.0.2
-  shared_preferences: ^2.0.13  # Added this line
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:

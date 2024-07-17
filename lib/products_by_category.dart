@@ -51,12 +51,12 @@ class _ProductsByCategoryState extends State<ProductsByCategory> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Products',
                     style: TextStyle(
                       fontSize: 20,
@@ -90,7 +90,7 @@ class _ProductsByCategoryState extends State<ProductsByCategory> {
                     itemBuilder: (context, index) {
                       return ProductCard(
                         title: snapshot.data![index].name,
-                        imageUrl: snapshot.data![index].imageUrl, // Provide a default value
+                        imageUrl: snapshot.data![index].imageUrl ?? '', // Provide a default value
                         price: snapshot.data![index].price,
                         onTap: () {
                           Navigator.push(
@@ -132,7 +132,7 @@ class Product {
       id: json['productId'],
       name: json['productName'] ?? "",
       price: json['productPrice'] ?? 0,
-      imageUrl: "$baseUrl/uploads/products/" + json['productImage'],
+      imageUrl: '$baseUrl/uploads/products/' + json['productImage'] ?? "",
       description: '',
     );
 
@@ -146,12 +146,12 @@ class ProductCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const ProductCard({
-    super.key,
+    Key? key,
     required this.title,
     required this.imageUrl,
     required this.price,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +190,6 @@ class ProductCard extends StatelessWidget {
 
 void main() {
   runApp(MaterialApp(
-    home: ProductScreen(productId: 1),
+    home: ProductDetailScreen(productId: 1),
   ));
 }

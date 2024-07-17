@@ -3,16 +3,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductScreen extends StatefulWidget {
+class ProductDetailScreen extends StatefulWidget {
   final int productId;
 
-  ProductScreen({required this.productId});
+  ProductDetailScreen({required this.productId});
 
   @override
-  _ProductScreenState createState() => _ProductScreenState();
+  _ProductDetailScreenState createState() => _ProductDetailScreenState();
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<Product> product;
   late Future<List<Product>> otherProducts;
 
@@ -87,7 +87,11 @@ class _ProductScreenState extends State<ProductScreen> {
                 children: [
                   Stack(
                     children: [
-                      Image.network('http://65.108.148.127${snapshot.data!.imageUrl}'),
+                      Image.network(
+                        'http://65.108.148.127${snapshot.data!.imageUrl}',
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
                       Positioned(
                         top: 16,
                         right: 16,
@@ -105,7 +109,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   Text(
                     snapshot.data!.name,
                     style: const TextStyle(
@@ -123,6 +127,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   ),
                   const SizedBox(height: 16),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove),
@@ -140,38 +145,38 @@ class _ProductScreenState extends State<ProductScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add to cart
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      primary: Colors.blue,
+                    ),
+                    child: const Text(
+                      'Add to Cart',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
                   const Text(
-                    'Description Product',
+                    'Description',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    snapshot.data!.description,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Add product to cart
-                    },
-                    child: const Text('Add to Cart'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                  ),
+                  Text(snapshot.data!.description),
                   const SizedBox(height: 32),
                   const Text(
-                    'Other Medicines',
+                    'Other Products',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   FutureBuilder<List<Product>>(
                     future: otherProducts,
                     builder: (context, snapshot) {
@@ -180,35 +185,47 @@ class _ProductScreenState extends State<ProductScreen> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
-                        return SizedBox(
-                          height: 200,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: ProductCard(
-                                  title: snapshot.data![index].name,
-                                  imageUrl: snapshot.data![index].imageUrl,
-                                  price: snapshot.data![index].price,
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProductScreen(
-                                          productId: snapshot.data![index].id,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
+                        return GridView.builder(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            childAspectRatio: 0.75,
                           ),
+                          itemCount: snapshot.data!.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                // Navigate to product detail
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Image.network(
+                                      'http://65.108.148.127${snapshot.data![index].imageUrl}',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    snapshot.data![index].name,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text('Rs ${snapshot.data![index].price}'),
+                                ],
+                              ),
+                            );
+                          },
                         );
                       } else {
-                        return const Center(child: Text('No other products available'));
+                        return Center(child: Text('No products found'));
                       }
                     },
                   ),
@@ -216,7 +233,7 @@ class _ProductScreenState extends State<ProductScreen> {
               ),
             );
           } else {
-            return const Center(child: Text('No data available'));
+            return const Center(child: Text('No product details available'));
           }
         },
       ),
@@ -240,78 +257,12 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    if (json['productDescription'] != null) {
-      return Product(
-        id: json['productId'],
-        name: json['productName'],
-        price: json['productPrice'].toDouble(),
-        description: json['productDescription'],
-        imageUrl: json['productImage'],
-      );
-    }
-    else {
-      return Product(
-        id: json['productId'],
-        name: json['productName'],
-        price: json['productPrice'].toDouble(),
-        description: "",
-        imageUrl: json['productImage'],
-      );
-    }
-  }
-}
-
-class ProductCard extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  final double price;
-  final VoidCallback onTap;
-
-  const ProductCard({
-    Key? key,
-    required this.title,
-    required this.imageUrl,
-    required this.price,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(imageUrl, height: 80),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Rs $price',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.green,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return Product(
+      id: json['id'],
+      name: json['name'],
+      price: json['price'],
+      description: json['description'],
+      imageUrl: json['imageUrl'],
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: ProductScreen(productId: 1),
-  ));
 }

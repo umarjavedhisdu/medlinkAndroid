@@ -1,136 +1,85 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:medlink/location.dart'; // Import your location.dart file
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
-
-  @override
-  _CheckoutScreenState createState() => _CheckoutScreenState();
-}
-
-class _CheckoutScreenState extends State<CheckoutScreen> {
-  String shippingAddress = 'Loading...';
-  Map<String, String> paymentSummary = {
-    'Order Total': 'Loading...',
-    'Shipping': 'Loading...',
-    'Total': 'Loading...'
-  };
-
-  @override
-  void initState() {
-    super.initState();
-    fetchOrderDetails();
-  }
-
-  Future<void> fetchOrderDetails() async {
-    final url = Uri.parse('http://65.108.148.127/api/orderDetails'); // Replace with your endpoint
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          shippingAddress = data['shippingAddress'];
-          paymentSummary = {
-            'Order Total': data['orderTotal'],
-            'Shipping': data['shipping'],
-            'Total': data['total'],
-          };
-        });
-      } else {
-        throw Exception('Failed to load order details');
-      }
-    } catch (error) {
-      setState(() {
-        shippingAddress = 'Failed to load address';
-        paymentSummary = {
-          'Order Total': 'Failed to load',
-          'Shipping': 'Failed to load',
-          'Total': 'Failed to load',
-        };
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Checkout'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Shipping Address',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              shippingAddress,
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'Payment Summary',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            buildPaymentSummaryRow('Order Total', paymentSummary['Order Total']!),
-            buildPaymentSummaryRow('Shipping', paymentSummary['Shipping']!),
-            buildPaymentSummaryRow('Total', paymentSummary['Total']!),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the LocationScreen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LocationScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                backgroundColor: Colors.blueAccent,
-              ),
-              child: const Text('Change'),
-            ),
-          ],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-    );
-  }
-
-  Widget buildPaymentSummaryRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-      ],
+      body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Shipping Address', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.home),
+                    title:
+                    const Text('House # 324, Block-P\nJohar Town, Lahore'),
+                    trailing:
+                    ElevatedButton(onPressed: () {}, child:
+                    const Text('Change', style:
+                    TextStyle(color:
+                    Colors.white))),
+                  ),
+                ),
+                const SizedBox(height : 20),
+                const Text('Payment Summary', style : TextStyle(fontSize : 18, fontWeight : FontWeight.bold)),
+                const Card (
+                    child : Padding (
+                        padding : EdgeInsets.all(8.0),
+                        child : Column (
+                            children:[
+                              Row (
+                                  mainAxisAlignment :
+                                  MainAxisAlignment.spaceBetween,
+                                  children:[
+                                    Text ('Order Total'),
+                                    Text ('2000 Rs')
+                                  ]
+                              ),
+                              Row (
+                                  mainAxisAlignment :
+                                  MainAxisAlignment.spaceBetween,
+                                  children:[
+                                    Text ('Shipping'),
+                                    Text ('Free')
+                                  ]
+                              ),
+                              Divider(),
+                              Row (
+                                  mainAxisAlignment :
+                                  MainAxisAlignment.spaceBetween,
+                                  children:[
+                                    Text ('Total', style :
+                                    TextStyle(fontWeight :
+                                    FontWeight.bold)),
+                                    Text ('2000 Rs', style :
+                                    TextStyle(fontWeight :
+                                    FontWeight.bold))
+                                  ]
+                              )
+                            ]
+                        )
+                    )
+                ),
+                const Spacer(),
+                Center(child:ElevatedButton(onPressed : (){},child:
+                const Padding(padding:
+                EdgeInsets.symmetric(horizontal :50, vertical :10),child:
+                Text('Place Order',
+                    style:
+                    TextStyle(fontSize
+                        :20)))))]
+          )),
     );
   }
 }

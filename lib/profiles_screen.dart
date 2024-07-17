@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'constants.dart';
+import 'MainMenuScreen.dart';
+import 'cart_screen.dart';
 
 class ProfilesScreen extends StatefulWidget {
   const ProfilesScreen({super.key});
@@ -15,6 +16,7 @@ class ProfilesScreen extends StatefulWidget {
 class _ProfilesScreenState extends State<ProfilesScreen> {
   String userName = '';
   String userEmail = '';
+  int _selectedIndex = 2; // Default selected index for Profile screen
 
   @override
   void initState() {
@@ -24,12 +26,13 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
 
   Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-      return prefs.getString('token');
-    }
+    return prefs.getString('token');
+  }
 
   Future<void> _fetchUserProfile() async {
     String? token = await getToken();
-    final response = await http.post(Uri.parse('$baseUrl/api/customer/getUserInformation'),
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/customer/getUserInformation'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -46,6 +49,40 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
         userName = 'Anni';
         userEmail = '****@gmail.com';
       });
+    }
+  }
+
+  Future<void> _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    // Navigate to the login screen or another appropriate screen
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MainMenuScreen()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CartScreen()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+        );
+        break;
     }
   }
 
@@ -101,6 +138,11 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
             leading: Icon(Icons.book),
             title: Text('Terms and Conditions'),
           ),
+          ListTile(
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Logout'),
+            onTap: _logout,
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -110,18 +152,21 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
+            icon: Icon(Icons.shopping_cart),
             label: 'Orders',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'Bookmarks',
+            icon: Icon(Icons.bookmark),
+            label: 'Bookmark',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Color.fromARGB(255, 11, 12, 80), // Change to your desired color
+        onTap: _onItemTapped,
       ),
     );
   }

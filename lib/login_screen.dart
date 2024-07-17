@@ -40,11 +40,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       if (responseData['token'] != null) {
-        // Save token to shared preferences/local storage (implement this as needed)
+        // Save token to shared preferences
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', responseData['token']);
+
         // Navigate to the main menu screen
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainMenuScreen()),
         );

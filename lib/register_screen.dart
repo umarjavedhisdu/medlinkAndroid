@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'constants.dart';
 import 'login_screen.dart'; // Import the LoginScreen.dart file
 
 class RegisterScreen extends StatefulWidget {
@@ -30,12 +29,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: const Text('Passwords do not match'),
+          title: Text('Error'),
+          content: Text('Passwords do not match'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+              child: Text('OK'),
             ),
           ],
         ),
@@ -44,7 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('$baseUrl/api/Authenticate/register'),
+      Uri.parse('http://65.108.148.127/api/Authenticate/register'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -61,8 +60,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Success'),
-          content: const Text('Registration successful'),
+          title: Text('Success'),
+          content: Text('Registration successful'),
           actions: [
             TextButton(
               onPressed: () {
@@ -72,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
                 );
               },
-              child: const Text('OK'),
+              child: Text('OK'),
             ),
           ],
         ),
@@ -82,12 +81,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Error'),
+          title: Text('Error'),
           content: Text('Registration failed: ${response.body}'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
+              child: Text('OK'),
             ),
           ],
         ),
@@ -191,7 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text("Already have an account?"),
+                    Text("Already have an account?"),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -199,7 +198,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           MaterialPageRoute(builder: (context) => const LoginScreen()),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         'Login',
                         style: TextStyle(
                           color: Color.fromRGBO(88, 87, 219, 1),

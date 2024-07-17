@@ -8,6 +8,8 @@ import 'product_detail_screen.dart'; // Import the ProductDetailScreen class
 import 'profiles_screen.dart';
 import 'location.dart';
 import 'cart_screen.dart';
+import 'package:location/location.dart';
+import 'MainOrder.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({Key? key}) : super(key: key);
@@ -19,12 +21,47 @@ class MainMenuScreen extends StatefulWidget {
 class _MainMenuScreenState extends State<MainMenuScreen> {
   late Future<List<Category>> _categories;
   late Future<List<Product>> _products;
+  int _selectedIndex = 0;
+  String _currentLocation = 'Loading...';
+  final Location _location = Location();
 
   @override
   void initState() {
     super.initState();
     _categories = fetchCategories();
     _products = fetchProducts();
+    _loadCurrentLocation();
+  }
+
+  Future<void> _loadCurrentLocation() async {
+    String location = await getCurrentLocation();
+    setState(() {
+      _currentLocation = location;
+    });
+  }
+
+  Future<String> getCurrentLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await _location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await _location.requestService();
+      if (!_serviceEnabled) {
+        return 'Location service disabled';
+      }
+    }
+
+    _permissionGranted = await _location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await _location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return 'Location permission denied';
+      }
+    }
+
+    LocationData locationData = await _location.getLocation();
+    return '${locationData.latitude}, ${locationData.longitude}';
   }
 
   Future<String?> getToken() async {
@@ -44,12 +81,13 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> categoriesJson = json.decode(response.body);
-        return (categoriesJson['data'] as List).map((json) => Category.fromJson(json)).toList();
+        return (categoriesJson['data'] as List)
+            .map((json) => Category.fromJson(json))
+            .toList();
       } else {
         throw Exception('Failed to load categories');
       }
-    }
-    catch (exception) {
+    } catch (exception) {
       throw Exception(exception);
     }
   }
@@ -66,13 +104,47 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> productsJson = json.decode(response.body);
-        return (productsJson['data'] as List).map((json) => Product.fromJson(json)).toList();
+        return (productsJson['data'] as List)
+            .map((json) => Product.fromJson(json))
+            .toList();
       } else {
         throw Exception('Failed to load products');
       }
-    }
-    catch (exception) {
+    } catch (exception) {
       throw Exception('Failed to load products');
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MainMenuScreen()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const OrdersScreen()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CartScreen()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilesScreen()),
+        );
+        break;
     }
   }
 
@@ -93,27 +165,33 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                       const Icon(Icons.location_on),
                       const SizedBox(width: 8.0),
                       InkWell(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const LocationScreen()),
                           );
+
+                          if (result != null) {
+                            setState(() {
+                              _currentLocation = result;
+                            });
+                          }
                         },
-                        child: const Column(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Current location - Jl. Soekarno Hatta 15A..',
-                              style: TextStyle(
+                              'Current location - $_currentLocation',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Change location',
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Color.fromRGBO(88, 87, 219, 1),
                                 fontSize: 14,
                               ),
                             ),
@@ -163,17 +241,19 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                   ),
                   TextButton(
                     // TODO: instead of opening product detail show all categories instead
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProductDetailScreen(productId: 0)),
-                        );
-                      },
-                      child: const Text(
-                        'see all',
-                        style: TextStyle(color: Colors.blueAccent),
-                      ))
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ProductDetailScreen(productId: 0)),
+                      );
+                    },
+                    child: const Text(
+                      'see all',
+                      style: TextStyle(color: Color.fromRGBO(88, 87, 219, 1)),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -190,7 +270,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                   return GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
@@ -199,12 +280,14 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     itemBuilder: (context, index) {
                       return CategoryCard(
                         title: snapshot.data![index].name,
-                        imageUrl: snapshot.data![index].imageUrl ?? '', // Provide a default value
+                        imageUrl: snapshot.data![index].imageUrl ??
+                            '', // Provide a default value
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProductsByCategory(categoryId: snapshot.data![index].id)),
+                                builder: (context) => ProductsByCategory(
+                                    categoryId: snapshot.data![index].id)),
                           );
                         },
                       );
@@ -236,7 +319,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                   return GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
@@ -246,13 +330,15 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                     itemBuilder: (context, index) {
                       return ProductCard(
                         title: snapshot.data![index].name,
-                        imageUrl: snapshot.data![index].imageUrl ?? '', // Provide a default value
+                        imageUrl: snapshot.data![index].imageUrl ??
+                            '', // Provide a default value
                         price: snapshot.data![index].price,
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProductDetailScreen(productId: snapshot.data![index].id)),
+                                builder: (context) => ProductDetailScreen(
+                                    productId: snapshot.data![index].id)),
                           );
                         },
                       );
@@ -272,7 +358,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                   'View More Products',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.blue,
+                    color: Color.fromRGBO(88, 87, 219, 1),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -281,41 +367,29 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MainMenuScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.shopping_cart),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CartScreen()),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.person),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ProfilesScreen()),
-                );
-              },
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Orders',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            label: 'Bookmark',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: const Color.fromRGBO(88, 87, 219, 1),
+        unselectedItemColor: Colors.black,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -429,7 +503,7 @@ class Category {
     return Category(
       id: json['categoryId'] ?? 0,
       name: json['categoryName'] ?? 'Unknown',
-      imageUrl: baseUrl+ json['categoryImage'],
+      imageUrl: '$baseUrl' + json['categoryImage'] ?? '',
     );
   }
 }
